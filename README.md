@@ -15,6 +15,15 @@
 dotnet tool install --global dotnet-ef
 ```
 
+### 1.1 Dependências (Pacotes NuGet)
+Para rodar o EF Core com MySQL neste projeto, os seguintes pacotes são indispensáveis e já devem estar listados no projeto (basta rodar `dotnet restore` para baixar as dependências, ou instalá-los manualmente caso esteja criando do zero):
+```bash
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Pomelo.EntityFrameworkCore.MySql
+```
+*(Também utilizamos os pacotes `Microsoft.Extensions.Configuration`, `Microsoft.Extensions.Configuration.Json` e `Microsoft.Extensions.Configuration.UserSecrets` para proteger a string de conexão).*
+
 ---
 
 ### 2. Configurar a conexão com o banco
