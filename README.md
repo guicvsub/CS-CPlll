@@ -19,10 +19,10 @@ dotnet tool install --global dotnet-ef
 
 ### 2. Configurar a conexão com o banco
 
-Na pasta **raiz do projeto** (`HelpDeskEFCore/`), configure a string de conexão com seus dados do MySQL:
+Na pasta **raiz do projeto** (`/`), configure a string de conexão com seus dados do MySQL:
 
 ```bash
-cd ..\HelpDeskEFCore
+
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Port=3306;Database=HelpDesk;Uid=root;Pwd=SUA_SENHA;"
 ```
 
@@ -33,7 +33,7 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;
 ### 3. Criar o banco de dados
 
 ```bash
-cd ..\HelpDeskEFCore
+
 dotnet ef database update
 ```
 
@@ -48,7 +48,7 @@ Isso cria automaticamente o banco `HelpDesk` com as tabelas:
 ### 4. Rodar a aplicação WPF
 
 ```bash
-cd WpfApp1
+
 dotnet run
 ```
 
@@ -59,16 +59,15 @@ Ou abra `WpfApp1.sln` no **Visual Studio 2022** e pressione **F5**.
 ## 📌 Resumo dos comandos (ordem correta)
 
 ```bash
-# 1. Entrar na pasta do console (onde está o DbContext)
-cd HelpDeskEFCore
 
-# 2. Configurar senha do MySQL
+
+# 1. Configurar senha do MySQL
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Port=3306;Database=HelpDesk;Uid=root;Pwd=SENHA;"
 
-# 3. Criar banco e tabelas
+# 2. Criar banco e tabelas
 dotnet ef database update
 
-# 4. Rodar o WPF
-cd WpfApp1
+# 3. Rodar o WPF
+
 dotnet run
 ```
