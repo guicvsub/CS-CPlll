@@ -30,10 +30,16 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;
 
 ---
 
-### 3. Criar o banco de dados
+### 3. Criar e Atualizar o banco de dados
 
+Para gerar uma nova migração antes de atualizar (esse comando irá gerar a pasta `Migrations` no seu projeto):
 ```bash
 cd ..\HelpDeskEFCore
+dotnet ef migrations add UpdateModel
+```
+
+Para aplicar as migrações e criar o banco efetivamente (mesmo que o banco de dados esteja vazio ou ainda não exista, este comando é necessário):
+```bash
 dotnet ef database update
 ```
 
@@ -65,7 +71,8 @@ cd HelpDeskEFCore
 # 2. Configurar senha do MySQL
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Port=3306;Database=HelpDesk;Uid=root;Pwd=SENHA;"
 
-# 3. Criar banco e tabelas
+# 3. Criar migração (gera a pasta Migrations no projeto) e atualizar banco
+dotnet ef migrations add UpdateModel
 dotnet ef database update
 
 # 4. Rodar o WPF
