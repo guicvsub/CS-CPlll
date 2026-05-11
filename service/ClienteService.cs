@@ -16,7 +16,7 @@ namespace WpfApp1.service
 
         public async Task<List<Cliente>> ListarTodosAsync()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Clientes.AsNoTracking().ToListAsync();
         }
 
         public async Task AdicionarAsync(Cliente cliente)
@@ -46,9 +46,5 @@ namespace WpfApp1.service
             }
         }
 
-        Task<List<Cliente>> IClienteService.ListarTodosAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

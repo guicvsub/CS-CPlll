@@ -39,24 +39,22 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;
 
 ---
 
-### 3. Criar e Atualizar o banco de dados
+### 3. Criar as Tabelas no Banco de Dados
 
-Para gerar uma nova migração antes de atualizar (esse comando irá gerar a pasta `Migrations` no seu projeto):
-```bash
+Como o projeto já possui a pasta `Migrations` configurada no código, você **não precisa gerar novas migrações**. Basta aplicar as existentes no seu banco de dados.
+Se o seu banco de dados estiver completamente vazio (ambiente zerado), o comando abaixo vai criar o banco `HelpDesk` automaticamente do zero já com todas as estruturas necessárias.
 
-dotnet ef migrations add UpdateModel
-```
-
-Para aplicar as migrações e criar o banco efetivamente (mesmo que o banco de dados esteja vazio ou ainda não exista, este comando é necessário):
+Execute:
 ```bash
 dotnet ef database update
 ```
 
-Isso cria automaticamente o banco `HelpDesk` com as tabelas:
+Isso criará automaticamente o banco `HelpDesk` com as tabelas:
 - `Clientes`
 - `Tecnicos`
 - `Chamados`
 - `Departamentos`
+- `Equipamentos`
 
 ---
 
@@ -80,11 +78,20 @@ Ou abra `WpfApp1.sln` no **Visual Studio 2022** e pressione **F5**.
 # 2. Configurar senha do MySQL
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Port=3306;Database=HelpDesk;Uid=root;Pwd=SENHA;"
 
-# 3. Criar migração (gera a pasta Migrations no projeto) e atualizar banco
-dotnet ef migrations add UpdateModel
+# 3. Aplicar as migrações no banco (já cria todas as tabelas em bancos zerados baseando-se nas migrations do projeto)
 dotnet ef database update
 
 # 4. Rodar o WPF
 
 dotnet run
 ```
+
+---
+
+## 📝 Notas de Arquitetura e Decisões de Projeto
+
+**1. Busca por ID**
+A busca por ID (`BuscarPorIdAsync`) **foi implementada no backend** cumprindo o requisito. Porém, não é utilizada pelo usuário no frontend: em aplicações gráficas modernas, não há necessidade de decorar ou digitar IDs, pois a seleção para edição/exclusão é feita com cliques diretos na lista.
+
+**2. Ausência de Paginação e Sobrecarga**
+Carregar todos os registros de uma vez sem filtro geraria sobrecarga de memória, o que normalmente exigiria criar paginação. Isso foi resolvido utilizando o **`.AsNoTracking()`** nas consultas do Entity Framework. Essa função remove o monitoramento de cache das entidades, deixando as requisições extremamente leves e rápidas, mitigando a sobrecarga e dispensando a necessidade de paginação para este escopo.

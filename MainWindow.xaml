@@ -441,6 +441,18 @@
                                 <CheckBox Content="Disponível" IsChecked="{Binding FormDisponivel}" Foreground="White"/>
                             </StackPanel>
 
+                            <!-- Equipamento Fields -->
+                            <StackPanel Visibility="{Binding ShowEquipamentos, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="Patrimônio *" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding FormPatrimonio, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14"/>
+                                <TextBlock Text="Tipo" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding FormTipo, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14"/>
+                                <TextBlock Text="Modelo" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding FormModelo, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14"/>
+                                <TextBlock Text="Status *" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,4"/>
+                                <ComboBox ItemsSource="{Binding StatusEquipamentoList}" SelectedItem="{Binding FormStatusEquipamento}" Margin="0,0,0,14"/>
+                            </StackPanel>
+
                             <!-- Buttons -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
                                 <Button Content="Cancelar" Style="{StaticResource GhostBtn}" Command="{Binding CancelFormCommand}" Margin="0,0,10,0" Width="110"/>

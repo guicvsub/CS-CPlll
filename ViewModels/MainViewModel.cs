@@ -15,12 +15,14 @@ namespace WpfApp1.ViewModels
         private readonly IDepartamentoService? _departamentoService;
         private readonly ITecnicoService? _tecnicoService;
         private readonly IChamadoService? _chamadoService;
+        private readonly IEquipamentoService? _equipamentoService;
 
         // Navigation
         private bool _showChamados = true;
         private bool _showClientes;
         private bool _showDepartamentos;
         private bool _showTecnicos;
+        private bool _showEquipamentos;
 
         public bool ShowChamados
         {
@@ -42,16 +44,23 @@ namespace WpfApp1.ViewModels
             get => _showTecnicos;
             set { _showTecnicos = value; OnPropertyChanged(); OnPropertyChanged(nameof(CurrentPageTitle)); OnPropertyChanged(nameof(CurrentPageSubtitle)); }
         }
+        public bool ShowEquipamentos
+        {
+            get => _showEquipamentos;
+            set { _showEquipamentos = value; OnPropertyChanged(); OnPropertyChanged(nameof(CurrentPageTitle)); OnPropertyChanged(nameof(CurrentPageSubtitle)); }
+        }
 
-        public string CurrentPageTitle => ShowChamados ? "Chamados" : ShowClientes ? "Clientes" : ShowDepartamentos ? "Departamentos" : "Técnicos";
-        public string CurrentPageSubtitle => ShowChamados ? "Gerencie todos os chamados de suporte" : ShowClientes ? "Cadastro e gestão de clientes" : ShowDepartamentos ? "Setores e departamentos da empresa" : "Equipe técnica de atendimento";
+        public string CurrentPageTitle => ShowChamados ? "Chamados" : ShowClientes ? "Clientes" : ShowDepartamentos ? "Departamentos" : ShowTecnicos ? "Técnicos" : "Equipamentos";
+        public string CurrentPageSubtitle => ShowChamados ? "Gerencie todos os chamados de suporte" : ShowClientes ? "Cadastro e gestão de clientes" : ShowDepartamentos ? "Setores e departamentos da empresa" : ShowTecnicos ? "Equipe técnica de atendimento" : "Gestão de patrimônio e equipamentos";
 
         // Collections
         public ObservableCollection<Cliente> Clientes { get; } = new();
         public ObservableCollection<Departamento> Departamentos { get; } = new();
         public ObservableCollection<Tecnico> Tecnicos { get; } = new();
         public ObservableCollection<Chamado> Chamados { get; } = new();
+        public ObservableCollection<Equipamento> Equipamentos { get; } = new();
         public List<string> Prioridades { get; } = new() { "Alta", "Média", "Baixa" };
+        public List<string> StatusEquipamentoList { get; } = new() { "Disponível", "Em manutenção", "Emprestado", "Descartado" };
 
         // Selected items
         private Chamado? _selectedChamado;
@@ -59,12 +68,14 @@ namespace WpfApp1.ViewModels
         private Departamento? _selectedDepartamento;
         private Tecnico? _selectedTecnico;
         private Tecnico? _tecnicoParaAtender;
+        private Equipamento? _selectedEquipamento;
 
         public Chamado? SelectedChamado { get => _selectedChamado; set { _selectedChamado = value; OnPropertyChanged(); } }
         public Cliente? SelectedCliente { get => _selectedCliente; set { _selectedCliente = value; OnPropertyChanged(); } }
         public Departamento? SelectedDepartamento { get => _selectedDepartamento; set { _selectedDepartamento = value; OnPropertyChanged(); } }
         public Tecnico? SelectedTecnico { get => _selectedTecnico; set { _selectedTecnico = value; OnPropertyChanged(); } }
         public Tecnico? TecnicoParaAtender { get => _tecnicoParaAtender; set { _tecnicoParaAtender = value; OnPropertyChanged(); } }
+        public Equipamento? SelectedEquipamento { get => _selectedEquipamento; set { _selectedEquipamento = value; OnPropertyChanged(); } }
 
         // Stats
         public int TotalChamados => Chamados.Count;
@@ -111,6 +122,16 @@ namespace WpfApp1.ViewModels
         public string FormNomeCliente { get => _formNomeCliente; set { _formNomeCliente = value; OnPropertyChanged(); } }
         public Tecnico? FormTecnicoSelecionado { get => _formTecnicoSelecionado; set { _formTecnicoSelecionado = value; OnPropertyChanged(); } }
 
+        private string _formPatrimonio = "";
+        private string _formTipo = "";
+        private string _formModelo = "";
+        private string _formStatusEquipamento = "Disponível";
+
+        public string FormPatrimonio { get => _formPatrimonio; set { _formPatrimonio = value; OnPropertyChanged(); } }
+        public string FormTipo { get => _formTipo; set { _formTipo = value; OnPropertyChanged(); } }
+        public string FormModelo { get => _formModelo; set { _formModelo = value; OnPropertyChanged(); } }
+        public string FormStatusEquipamento { get => _formStatusEquipamento; set { _formStatusEquipamento = value; OnPropertyChanged(); } }
+
         // Commands
         public ICommand OpenAddDialogCommand { get; }
         public ICommand EditCommand { get; }
@@ -134,6 +155,7 @@ namespace WpfApp1.ViewModels
                     _departamentoService = new DepartamentoService(ctx);
                     _tecnicoService = new TecnicoService(ctx);
                     _chamadoService = new ChamadoService(ctx);
+                    _equipamentoService = new EquipamentoService(ctx);
                     _ = CarregarDadosAsync();
                 }
             }
@@ -156,22 +178,31 @@ namespace WpfApp1.ViewModels
             if (_clienteService == null) return;
             StatusMessage = "Sincronizando...";
 
-            var clientes = await _clienteService.ListarTodosAsync();
-            var departamentos = await _departamentoService!.ListarTodosAsync();
-            var tecnicos = await _tecnicoService!.ListarTodosAsync();
-            var chamados = await _chamadoService!.ListarTodosAsync();
-
-            App.Current.Dispatcher.Invoke(() =>
+            try
             {
-                Clientes.Clear(); foreach (var c in clientes) Clientes.Add(c);
-                Departamentos.Clear(); foreach (var d in departamentos) Departamentos.Add(d);
-                Tecnicos.Clear(); foreach (var t in tecnicos) Tecnicos.Add(t);
-                Chamados.Clear(); foreach (var ch in chamados) Chamados.Add(ch);
-                OnPropertyChanged(nameof(TotalChamados));
-                OnPropertyChanged(nameof(ChamadosAbertos));
-                OnPropertyChanged(nameof(ChamadosResolvidos));
-                StatusMessage = $"Atualizado • {clientes.Count} clientes • {chamados.Count} chamados";
-            });
+                var clientes = await _clienteService.ListarTodosAsync();
+                var departamentos = await _departamentoService!.ListarTodosAsync();
+                var tecnicos = await _tecnicoService!.ListarTodosAsync();
+                var chamados = await _chamadoService!.ListarTodosAsync();
+                var equipamentos = _equipamentoService != null ? await _equipamentoService.ListarTodosAsync() : new List<Equipamento>();
+
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    Clientes.Clear(); foreach (var c in clientes) Clientes.Add(c);
+                    Departamentos.Clear(); foreach (var d in departamentos) Departamentos.Add(d);
+                    Tecnicos.Clear(); foreach (var t in tecnicos) Tecnicos.Add(t);
+                    Chamados.Clear(); foreach (var ch in chamados) Chamados.Add(ch);
+                    Equipamentos.Clear(); foreach (var e in equipamentos) Equipamentos.Add(e);
+                    OnPropertyChanged(nameof(TotalChamados));
+                    OnPropertyChanged(nameof(ChamadosAbertos));
+                    OnPropertyChanged(nameof(ChamadosResolvidos));
+                    StatusMessage = $"Atualizado • {clientes.Count} clientes • {chamados.Count} chamados";
+                });
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Erro Sincronização: {ex.Message}";
+            }
         }
 
         private void AbrirFormularioNovo()
@@ -212,6 +243,13 @@ namespace WpfApp1.ViewModels
                 FormEmail = SelectedTecnico.Email;
                 FormDisponivel = SelectedTecnico.Disponivel;
             }
+            else if (ShowEquipamentos && SelectedEquipamento != null)
+            {
+                FormPatrimonio = SelectedEquipamento.Patrimonio;
+                FormTipo = SelectedEquipamento.Tipo;
+                FormModelo = SelectedEquipamento.Modelo;
+                FormStatusEquipamento = SelectedEquipamento.Status;
+            }
             OnPropertyChanged(nameof(FormTitle));
             ShowForm = true;
         }
@@ -222,6 +260,7 @@ namespace WpfApp1.ViewModels
             else if (ShowClientes) await SalvarClienteAsync();
             else if (ShowDepartamentos) await SalvarDepartamentoAsync();
             else if (ShowTecnicos) await SalvarTecnicoAsync();
+            else if (ShowEquipamentos) await SalvarEquipamentoAsync();
             ShowForm = false;
             await CarregarDadosAsync();
         }
@@ -281,12 +320,30 @@ namespace WpfApp1.ViewModels
             else { await _tecnicoService.AdicionarAsync(new Tecnico { Nome = FormNome, Especialidade = FormEspecialidade, Email = FormEmail, Disponivel = FormDisponivel }); }
         }
 
+        private async Task SalvarEquipamentoAsync()
+        {
+            if (_equipamentoService == null) return;
+            if (_isEditing && SelectedEquipamento != null)
+            {
+                SelectedEquipamento.Patrimonio = FormPatrimonio;
+                SelectedEquipamento.Tipo = FormTipo;
+                SelectedEquipamento.Modelo = FormModelo;
+                SelectedEquipamento.Status = FormStatusEquipamento;
+                await _equipamentoService.AtualizarAsync(SelectedEquipamento);
+            }
+            else
+            {
+                await _equipamentoService.AdicionarAsync(new Equipamento { Patrimonio = FormPatrimonio, Tipo = FormTipo, Modelo = FormModelo, Status = FormStatusEquipamento });
+            }
+        }
+
         private async Task ExcluirAsync()
         {
             if (ShowChamados && SelectedChamado != null) { await _chamadoService!.RemoverAsync(SelectedChamado.Id); }
             else if (ShowClientes && SelectedCliente != null) { await _clienteService!.RemoverAsync(SelectedCliente.Id); }
             else if (ShowDepartamentos && SelectedDepartamento != null) { await _departamentoService!.RemoverAsync(SelectedDepartamento.Id); }
             else if (ShowTecnicos && SelectedTecnico != null) { await _tecnicoService!.RemoverAsync(SelectedTecnico.Id); }
+            else if (ShowEquipamentos && SelectedEquipamento != null) { await _equipamentoService!.RemoverAsync(SelectedEquipamento.Id); }
             await CarregarDadosAsync();
         }
 
@@ -318,6 +375,8 @@ namespace WpfApp1.ViewModels
             FormPrioridade = "Média";
             FormAtivo = FormDisponivel = true;
             FormTecnicoSelecionado = null;
+            FormPatrimonio = FormTipo = FormModelo = "";
+            FormStatusEquipamento = "Disponível";
         }
     }
 }

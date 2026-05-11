@@ -10,7 +10,7 @@ namespace WpfApp1.service
         private readonly HelpDeskContext _context;
         public TecnicoService(HelpDeskContext context) => _context = context;
 
-        public async Task<List<Tecnico>> ListarTodosAsync() => await _context.Tecnicos.ToListAsync();
+        public async Task<List<Tecnico>> ListarTodosAsync() => await _context.Tecnicos.AsNoTracking().ToListAsync();
         public async Task AdicionarAsync(Tecnico tecnico) { _context.Tecnicos.Add(tecnico); await _context.SaveChangesAsync(); }
         public async Task AtualizarAsync(Tecnico tecnico) { _context.Tecnicos.Update(tecnico); await _context.SaveChangesAsync(); }
         public async Task RemoverAsync(int id)
@@ -18,7 +18,7 @@ namespace WpfApp1.service
             var t = await _context.Tecnicos.FindAsync(id);
             if (t != null) { _context.Tecnicos.Remove(t); await _context.SaveChangesAsync(); }
         }
-        public async Task<List<Tecnico>> ListarDisponiveisAsync() => await _context.Tecnicos.Where(t => t.Disponivel).ToListAsync();
+        public async Task<List<Tecnico>> ListarDisponiveisAsync() => await _context.Tecnicos.AsNoTracking().Where(t => t.Disponivel).ToListAsync();
     }
 
     public class ChamadoService : IChamadoService
@@ -26,7 +26,7 @@ namespace WpfApp1.service
         private readonly HelpDeskContext _context;
         public ChamadoService(HelpDeskContext context) => _context = context;
 
-        public async Task<List<Chamado>> ListarTodosAsync() => await _context.Chamados.ToListAsync();
+        public async Task<List<Chamado>> ListarTodosAsync() => await _context.Chamados.AsNoTracking().ToListAsync();
         public async Task AdicionarAsync(Chamado chamado) 
         { 
             chamado.Status = "Aberto";

@@ -11,7 +11,7 @@ using WpfApp1;
 namespace WpfApp1.Migrations
 {
     [DbContext(typeof(HelpDeskContext))]
-    [Migration("20260511114727_UpdateModel")]
+    [Migration("20260511172554_UpdateModel")]
     partial class UpdateModel
     {
         /// <inheritdoc />
@@ -112,6 +112,35 @@ namespace WpfApp1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departamentos");
+                });
+
+            modelBuilder.Entity("WpfApp1.Equipamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Modelo")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Patrimonio")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Equipamentos");
                 });
 
             modelBuilder.Entity("WpfApp1.Tecnico", b =>

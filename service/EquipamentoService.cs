@@ -15,7 +15,7 @@ namespace WpfApp1.service
 
         public async Task<List<Equipamento>> ListarTodosAsync()
         {
-            return await _context.Equipamentos.ToListAsync();
+            return await _context.Equipamentos.AsNoTracking().ToListAsync();
         }
 
         public async Task AdicionarAsync(Equipamento equipamento)

@@ -16,12 +16,12 @@ namespace WpfApp1.service
 
         public async Task<List<Departamento>> ListarTodosAsync()
         {
-            return await _context.Departamentos.ToListAsync();
+            return await _context.Departamentos.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Departamento>> ListarAtivosAsync()
         {
-            return await _context.Departamentos.Where(d => d.Ativo).ToListAsync();
+            return await _context.Departamentos.AsNoTracking().Where(d => d.Ativo).ToListAsync();
         }
 
         public async Task AdicionarAsync(Departamento departamento)
