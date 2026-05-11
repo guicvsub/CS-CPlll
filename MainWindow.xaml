@@ -40,7 +40,13 @@
                     <RadioButton Content="Clientes" IsChecked="{Binding ShowClientes, Mode=TwoWay}" GroupName="Nav" Style="{StaticResource NavButtonStyle}" Foreground="{StaticResource TextSecondaryBrush}"/>
                     <RadioButton Content="Departamentos" IsChecked="{Binding ShowDepartamentos, Mode=TwoWay}" GroupName="Nav" Style="{StaticResource NavButtonStyle}" Foreground="{StaticResource TextSecondaryBrush}"/>
                     <RadioButton Content="Tecnicos" IsChecked="{Binding ShowTecnicos, Mode=TwoWay}" GroupName="Nav" Style="{StaticResource NavButtonStyle}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <RadioButton Content="Equipamentos"
+             IsChecked="{Binding ShowEquipamentos, Mode=TwoWay}"
+             GroupName="Nav"
+             Style="{StaticResource NavButtonStyle}"
+             Foreground="{StaticResource TextSecondaryBrush}"/>
                 </StackPanel>
+                
 
                 <!-- Bottom stats -->
                 <StackPanel DockPanel.Dock="Bottom" Margin="20,0,20,24">
@@ -265,6 +271,117 @@
                             </StackPanel>
                         </Border>
                     </Grid>
+                </Border>
+                <!-- ===== EQUIPAMENTOS VIEW ===== -->
+                <Border Visibility="{Binding ShowEquipamentos, Converter={StaticResource BoolToVis}}"
+        Background="{StaticResource CardBrush}"
+        CornerRadius="12">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <DataGrid Grid.Row="0"
+                  ItemsSource="{Binding Equipamentos}"
+                  SelectedItem="{Binding SelectedEquipamento}"
+                  Margin="4">
+
+                            <DataGrid.Columns>
+
+                                <DataGridTextColumn Header="ID"
+                                    Binding="{Binding Id}"
+                                    Width="60"/>
+
+                                <DataGridTextColumn Header="PATRIMÔNIO"
+                                    Binding="{Binding Patrimonio}"
+                                    Width="160"/>
+
+                                <DataGridTextColumn Header="TIPO"
+                                    Binding="{Binding Tipo}"
+                                    Width="160"/>
+
+                                <DataGridTextColumn Header="MODELO"
+                                    Binding="{Binding Modelo}"
+                                    Width="220"/>
+
+                                <DataGridTemplateColumn Header="STATUS" Width="160">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+
+                                            <Border CornerRadius="4"
+                                    Padding="6,2"
+                                    HorizontalAlignment="Left"
+                                    Margin="4,0">
+
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+
+                                                        <Style.Triggers>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Disponível">
+                                                                <Setter Property="Background" Value="#14532d"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Em manutenção">
+                                                                <Setter Property="Background" Value="#78350f"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Emprestado">
+                                                                <Setter Property="Background" Value="#1e3a5f"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Descartado">
+                                                                <Setter Property="Background" Value="#7f1d1d"/>
+                                                            </DataTrigger>
+
+                                                        </Style.Triggers>
+
+                                                    </Style>
+                                                </Border.Style>
+
+                                                <TextBlock Text="{Binding Status}"
+                                           Foreground="White"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+
+                                            </Border>
+
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                            </DataGrid.Columns>
+
+                        </DataGrid>
+
+                        <!-- Action Bar -->
+                        <Border Grid.Row="1"
+                Background="{StaticResource CardLighterBrush}"
+                CornerRadius="0,0,12,12"
+                Padding="12,10">
+
+                            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+
+                                <Button Content="✎ Editar"
+                        Style="{StaticResource PrimaryBtn}"
+                        Command="{Binding EditCommand}"
+                        Margin="0,0,8,0"
+                        Padding="14,8"/>
+
+                                <Button Content="✕ Excluir"
+                        Style="{StaticResource RedBtn}"
+                        Command="{Binding DeleteCommand}"
+                        Padding="14,8"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </Grid>
+
                 </Border>
 
                 <!-- ===== FORM OVERLAY ===== -->
