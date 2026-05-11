@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+
 namespace WpfApp1.service
 {
     public class ClienteService : IClienteService
@@ -43,6 +44,11 @@ namespace WpfApp1.service
                 _context.Clientes.Remove(cliente);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        Task<List<Equipamento>> IClienteService.ListarTodosAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

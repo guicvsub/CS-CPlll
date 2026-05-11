@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace WpfApp1.service
 {
-    public interface IClienteService
+    public interface IClienteService 
     {
-        Task<List<Cliente>> ListarTodosAsync();
+        Task<List<Equipamento>> ListarTodosAsync();
         Task AdicionarAsync(Cliente cliente);
         Task AtualizarAsync(Cliente cliente);
         Task RemoverAsync(int id);
