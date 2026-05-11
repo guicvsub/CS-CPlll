@@ -46,7 +46,7 @@ namespace WpfApp1.service
             }
         }
 
-        Task<List<Equipamento>> IClienteService.ListarTodosAsync()
+        Task<List<Cliente>> IClienteService.ListarTodosAsync()
         {
             throw new NotImplementedException();
         }

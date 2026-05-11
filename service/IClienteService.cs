@@ -5,7 +5,7 @@ namespace WpfApp1.service
 {
     public interface IClienteService 
     {
-        Task<List<Equipamento>> ListarTodosAsync();
+        Task<List<Cliente>> ListarTodosAsync();
         Task AdicionarAsync(Cliente cliente);
         Task AtualizarAsync(Cliente cliente);
         Task RemoverAsync(int id);
